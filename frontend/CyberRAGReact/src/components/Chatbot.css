@@ -1,0 +1,48 @@
+const styles = {
+    container: {
+      width: "350px",
+      height: "500px",
+      border: "1px solid #ccc",
+      borderRadius: "10px",
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden"
+    },
+    chatBox: {
+      flex: 1,
+      padding: "10px",
+      display: "flex",
+      flexDirection: "column",
+      gap: "8px",
+      overflowY: "auto",
+      backgroundColor: "#fafafa"
+    },
+    message: {
+      maxWidth: "70%",
+      padding: "10px",
+      borderRadius: "10px",
+      fontSize: "14px"
+    },
+    inputArea: {
+      display: "flex",
+      padding: "10px",
+      borderTop: "1px solid #ddd",
+      backgroundColor: "white"
+    },
+    input: {
+      flex: 1,
+      padding: "8px",
+      borderRadius: "5px",
+      border: "1px solid #ccc",
+      fontSize: "14px"
+    },
+    button: {
+      marginLeft: "10px",
+      padding: "8px 12px",
+      borderRadius: "5px",
+      border: "none",
+      backgroundColor: "#007bff",
+      color: "white",
+      cursor: "pointer"
+    }
+  };
