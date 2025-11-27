@@ -7,6 +7,12 @@ backend/chroma_db/
 *.sqlite
 *.sqlite3
 
+# HuggingFace ChromaDB vector database
+chroma_db/
+chroma_db_hf/
+backend/chroma_db/
+backend/chroma_db_hf/
+
 # Python cache
 __pycache__/
 *.py[cod]
