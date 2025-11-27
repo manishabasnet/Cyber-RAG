@@ -15,9 +15,9 @@ load_dotenv('../.env')
 def load_vectorstore():
     """Load the existing ChromaDB vector store"""
     
-    print("Loading existing vector store...")
+    print("Loading vector store from disk...")
     
-    # Initialize the SAME embeddings model used for training
+    # Must use the SAME embedding model as training
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-mpnet-base-v2",
         model_kwargs={'device': 'mps'},
@@ -26,18 +26,24 @@ def load_vectorstore():
     
     # Load existing ChromaDB
     vectorstore = Chroma(
-        persist_directory="./chroma_db_2024",
+        persist_directory="./chroma_db_all",
         embedding_function=embeddings,
-        collection_name="cve_2024_collection"
+        collection_name="cve_all_collection"
     )
     
-    print("✓ Vector store loaded successfully!")
+    # Get collection info
+    collection = vectorstore._collection
+    count = collection.count()
+    
+    print(f"✓ Vector store loaded successfully!")
+    print(f"  Total CVEs in database: {count:,}")
+    
     return vectorstore
 
 def create_qa_chain(vectorstore):
     """Create a QA chain with LLM"""
     
-    print("Initializing ChatGPT...")
+    print("Initializing ChatGPT for responses...")
     llm = ChatOpenAI(
         model="gpt-3.5-turbo",
         temperature=0.7
@@ -47,13 +53,17 @@ def create_qa_chain(vectorstore):
         search_kwargs={"k": 5}  # Return top 5 most relevant CVEs
     )
     
-    template = """You are a cybersecurity expert assistant. Answer the question based on the following vulnerability information:
+    template = """You are a cybersecurity expert assistant specializing in vulnerability analysis. 
+
+Answer the user's question based on the following CVE vulnerability information from the National Vulnerability Database:
 
 Context: {context}
 
 Question: {question}
 
-Provide a clear and concise answer:"""
+Provide a clear, accurate, and helpful answer. If the information isn't in the context, say so.
+
+Answer:"""
     
     prompt = PromptTemplate.from_template(template)
     
@@ -67,15 +77,15 @@ Provide a clear and concise answer:"""
         | StrOutputParser()
     )
     
-    print("✓ QA Chain ready!")
+    print("✓ QA Chain ready!\n")
     return qa_chain, retriever
 
 def query_with_sources(qa_chain, retriever, query):
-    """Query the vector store and show sources"""
+    """Query and display answer with sources"""
     
-    print("\n" + "="*60)
+    print("\n" + "="*70)
     print(f"QUERY: {query}")
-    print("="*60)
+    print("="*70)
     
     # Get answer
     answer = qa_chain.invoke(query)
@@ -84,48 +94,56 @@ def query_with_sources(qa_chain, retriever, query):
     source_docs = retriever.invoke(query)
     
     print("\nANSWER:")
-    print("-"*60)
+    print("-"*70)
     print(answer)
     
-    print("\n" + "="*60)
-    print("SOURCE CVEs:")
-    print("="*60)
+    print("\n" + "="*70)
+    print("SOURCE CVEs (Most Relevant):")
+    print("="*70)
     for i, doc in enumerate(source_docs, 1):
         print(f"\n[{i}] {doc.metadata['cve_id']}")
         print(f"    Severity: {doc.metadata['cvss_severity']} (Score: {doc.metadata['cvss_score']})")
         print(f"    Status: {doc.metadata['vulnStatus']}")
         print(f"    Published: {doc.metadata['published'][:10]}")
-    print("="*60)
+    print("="*70)
 
 def interactive_mode(qa_chain, retriever):
-    """Interactive query mode"""
+    """Interactive query mode - like a chatbot"""
     
-    print("\n" + "="*60)
-    print("INTERACTIVE MODE - Ask questions about 2024 CVEs")
-    print("Type 'exit' or 'quit' to stop")
-    print("="*60 + "\n")
+    print("\n" + "="*70)
+    print("🤖 CYBERRAG CHATBOT - Interactive Mode")
+    print("="*70)
+    print("\nAsk questions about CVE vulnerabilities!")
+    print("Examples:")
+    print("  - What are the most critical vulnerabilities in 2024?")
+    print("  - Tell me about SQL injection vulnerabilities")
+    print("  - What CVEs affect Windows Server?")
+    print("  - Show me authentication bypass vulnerabilities")
+    print("\nType 'exit', 'quit', or 'q' to stop")
+    print("="*70 + "\n")
     
     while True:
-        query = input("Your question: ").strip()
+        query = input("💬 You: ").strip()
         
         if query.lower() in ['exit', 'quit', 'q']:
-            print("\nGoodbye!")
+            print("\n👋 Goodbye!\n")
             break
         
         if not query:
             continue
         
         try:
+            print("\n🤔 Thinking...\n")
             query_with_sources(qa_chain, retriever, query)
         except Exception as e:
-            print(f"\n✗ Error: {e}")
+            print(f"\n❌ Error: {e}")
         
         print("\n")
 
 if __name__ == "__main__":
-    print("="*60)
-    print("CVE 2024 DATA QUERY SYSTEM")
-    print("="*60 + "\n")
+    print("="*70)
+    print("🔒 CYBERRAG - CVE Query System")
+    print("="*70 + "\n")
     
     # Load vector store
     vectorstore = load_vectorstore()
@@ -133,14 +151,20 @@ if __name__ == "__main__":
     # Create QA chain
     qa_chain, retriever = create_qa_chain(vectorstore)
     
-    # Example queries (you can comment these out)
-    print("\n" + "="*60)
+    # Run some example queries
+    print("="*70)
     print("EXAMPLE QUERIES:")
-    print("="*60)
+    print("="*70)
     
-    query_with_sources(qa_chain, retriever, "What are the most critical vulnerabilities in 2024?")
-    query_with_sources(qa_chain, retriever, "Tell me about Microsoft vulnerabilities")
-    query_with_sources(qa_chain, retriever, "What vulnerabilities affect Linux?")
+    example_queries = [
+        "What are the most critical vulnerabilities from 2024?",
+        "Tell me about remote code execution vulnerabilities in Apache",
+        "What CVEs have a CVSS score above 9.5?"
+    ]
     
-    # Interactive mode
+    for query in example_queries:
+        query_with_sources(qa_chain, retriever, query)
+        print("\n")
+    
+    # Enter interactive mode
     interactive_mode(qa_chain, retriever)
