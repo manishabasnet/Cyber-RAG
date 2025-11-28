@@ -1,0 +1,62 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Loading animation */
+  .dot-flashing {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #3b82f6;
+    animation: dotFlashing 1s infinite linear alternate;
+    animation-delay: 0.5s;
+  }
+  
+  .dot-flashing::before,
+  .dot-flashing::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+  }
+  
+  .dot-flashing::before {
+    left: -15px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #3b82f6;
+    animation: dotFlashing 1s infinite alternate;
+    animation-delay: 0s;
+  }
+  
+  .dot-flashing::after {
+    left: 15px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #3b82f6;
+    animation: dotFlashing 1s infinite alternate;
+    animation-delay: 1s;
+  }
+  
+  @keyframes dotFlashing {
+    0% {
+      background-color: #3b82f6;
+    }
+    50%,
+    100% {
+      background-color: #bfdbfe;
+    }
+  }

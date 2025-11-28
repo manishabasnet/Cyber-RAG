@@ -112,7 +112,7 @@ def fetch_all_cves():
             break
     
     print(f"\n{'='*60}")
-    print(f"✓ FETCH COMPLETE!")
+    print(f"FETCH COMPLETE!")
     print(f"  Total CVEs fetched: {len(all_cves):,}")
     print(f"{'='*60}")
     
@@ -248,7 +248,7 @@ def process_all_cves():
         model_kwargs={'device': 'mps'},
         encode_kwargs={'normalize_embeddings': True}
     )
-    print("✓ Embeddings initialized (using M3 GPU)")
+    print("Embeddings initialized (using M3 GPU)")
     
     # Embed and store
     print("\n" + "="*60)
@@ -305,4 +305,4 @@ if __name__ == "__main__":
         minutes = int((total_time % 3600) // 60)
         seconds = int(total_time % 60)
         
-        print(f"\n✓ Total time: {hours}h {minutes}m {seconds}s")
+        print(f"\nTotal time: {hours}h {minutes}m {seconds}s")

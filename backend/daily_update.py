@@ -220,7 +220,7 @@ def daily_update():
     cves = fetch_modified_cves(last_update, current_time)
     
     if not cves:
-        print("\n✓ No new or modified CVEs found. Database is up to date!")
+        print("\nNo new or modified CVEs found. Database is up to date!")
         save_last_update_time(current_time)
         return
     
@@ -234,7 +234,7 @@ def daily_update():
         except Exception as e:
             print(f"✗ Error converting {cve.get('id', 'unknown')}: {e}")
     
-    print(f"✓ Converted {len(documents)} documents")
+    print(f"Converted {len(documents)} documents")
     
     # Initialize embeddings
     print("\nInitializing embeddings...")

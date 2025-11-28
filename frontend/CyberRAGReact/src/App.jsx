@@ -1,41 +1,22 @@
-import Chatbot from "./components/Chatbot";
-import VulnerabilityCard from "./components/VulnerabilityCard";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Chatbot from './components/Chatbot';
+import News from './components/News';
+import './App.css';
 
 function App() {
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Cyber RAG</h1>
-
-      <div style={styles.chatbotWrapper}>
-        <VulnerabilityCard
-          title="Sample Vulnerability"
-          description="This is a brief description of a sample vulnerability."
-        />
-        <Chatbot />
+    <Router>
+      <div className="App">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Chatbot />} />
+          <Route path="/news" element={<News />} />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
 }
-
-const styles = {
-  container: {
-    height: "100vh",
-    width: "100%",
-    backgroundColor: "#F5E5E1", 
-    position: "relative"
-  },
-  title: {
-    textAlign: "center",
-    marginTop: "20px",
-    color: "#174143", 
-    fontSize: "36px",
-    fontWeight: "bold"
-  },
-  chatbotWrapper: {
-    position: "fixed",
-    bottom: "20px",
-    right: "20px"
-  }
-};
 
 export default App;
